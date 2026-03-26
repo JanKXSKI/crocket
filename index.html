@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pocket</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 1rem;
+      margin: 0;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    #value {
+      font-size: 4rem;
+      margin: 1rem 0 2rem 0;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      flex-grow: 1;
+      justify-content: center;
+    }
+    .buttons button {
+      flex: 1;
+      font-size: 2rem;
+      margin: 0.3rem 0;
+      padding: 1rem;
+      border-radius: 12px;
+      border: none;
+      max-height: 8rem;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .buttons button:hover {
+      background: #0056b3;
+    }
+    .buttons button.add {
+      background: #28a745;
+    }
+    .buttons button.add:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pocket</h1>
+  <div id="value">0</div>
+  <div class="buttons">
+    <button data-action="clear">Put</button>
+  </div>
+
+  <script>
+    const VALUE_KEY = "counter_value";
+    const DATE_KEY = "counter_date";
+    const DAILY_INCREMENT = 20;
+
+    let value = parseInt(localStorage.getItem(VALUE_KEY)) || 0;
+    let lastDate = localStorage.getItem(DATE_KEY);
+    const today = new Date().toISOString().split("T")[0];
+
+    if (lastDate !== today) {
+      if (lastDate) {
+        const daysPassed = Math.floor(
+          (new Date(today) - new Date(lastDate)) / (1000 * 60 * 60 * 24)
+        );
+        if (daysPassed > 0) {
+          value += DAILY_INCREMENT * daysPassed;
+        }
+      }
+      localStorage.setItem(DATE_KEY, today);
+    }
+
+    const valueEl = document.getElementById("value");
+    function render() {
+      valueEl.textContent = value;
+      localStorage.setItem(VALUE_KEY, value);
+    }
+    render();
+
+    document.querySelectorAll(".buttons button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.action == "clear") {
+          value = 0;
+        }
+        render();
+      });
+    });
+  </script>
+</body>
+</html>
+
